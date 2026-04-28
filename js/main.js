@@ -29,6 +29,11 @@ const editMensaje = document.getElementById('edit-mensaje');
 const editFecha = document.getElementById('edit-fecha');
 const btnCerrarEditModal = editModal.querySelector('.cerrar-modal');
 
+// Elementos de la sección de Fechas Especiales
+const seccionFechas = document.getElementById('seccion-fechas');
+const formFechas = document.getElementById('form-fechas');
+const listaFechas = document.getElementById('lista-fechas');
+
 // ☁️ CONFIGURACIÓN CLOUDINARY
 const CLOUD_NAME = "dpoyzxlri"; // Ej: "dxyz123"
 const UPLOAD_PRESET = "recuerdos_preset";  // Ej: "recuerdos_preset" (Debe ser Unsigned)
@@ -37,7 +42,9 @@ checkbox.addEventListener('change', () => {
   if (checkbox.checked) {
     galeria.classList.remove('oculto');
     formulario.classList.remove('oculto');
+    seccionFechas.classList.remove('oculto');
     cargarRecuerdos();
+    cargarFechas();
   }
 });
 
@@ -232,5 +239,54 @@ btnCerrarEditModal.addEventListener('click', () => {
 editModal.addEventListener('click', (e) => {
   if (e.target === editModal) {
     editModal.classList.add('oculto');
+  }
+});
+
+// 📅 LÓGICA DE FECHAS ESPECIALES
+async function cargarFechas() {
+  listaFechas.innerHTML = "";
+  const querySnapshot = await getDocs(collection(db, "fechas"));
+  
+  // Ordenar por fecha (opcional)
+  const fechasArr = [];
+  querySnapshot.forEach(doc => fechasArr.push({ id: doc.id, ...doc.data() }));
+  fechasArr.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+  fechasArr.forEach((datos) => {
+    crearItemFecha(datos, datos.id);
+  });
+}
+
+function crearItemFecha(datos, id) {
+  const li = document.createElement('li');
+  li.className = 'item-fecha';
+  li.innerHTML = `
+    <div class="info-fecha">
+      <strong>${datos.fecha}:</strong> <span>${datos.descripcion}</span>
+    </div>
+    <button class="btn-eliminar-fecha" title="Eliminar">🗑️</button>
+  `;
+
+  li.querySelector('.btn-eliminar-fecha').addEventListener('click', async () => {
+    if (confirm("¿Eliminar esta fecha?")) {
+      await deleteDoc(doc(db, "fechas", id));
+      li.remove();
+    }
+  });
+
+  listaFechas.appendChild(li);
+}
+
+formFechas.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fecha = document.getElementById('nueva-fecha').value;
+  const descripcion = document.getElementById('nueva-descripcion').value;
+
+  try {
+    await addDoc(collection(db, "fechas"), { fecha, descripcion });
+    formFechas.reset();
+    cargarFechas();
+  } catch (error) {
+    console.error("Error al añadir fecha:", error);
   }
 });

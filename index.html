@@ -31,14 +31,6 @@
       </div>
     </section>
 
-    <!-- GALERÍA (por ahora vacía) -->
-    <section class="galeria oculto" id="galeria">
-      <h2>Nuestros Recuerdos 📸</h2>
-      <div class="grid-galeria" id="grid-galeria">
-        <!-- Aquí luego se cargan las fotos desde Firebase -->
-      </div>
-    </section>
-
     <section class="formulario oculto" id="formulario">
       <h2>Agregar un nuevo recuerdo 💕</h2>
     
@@ -52,6 +44,29 @@
         <button type="submit">Subir recuerdo 📸</button>
       </form>
     </section>
+
+    <!-- Contenedor para alinear Galería y Fechas Lado a Lado -->
+    <div class="contenedor-flex-recuerdos">
+      <!-- GALERÍA -->
+      <section class="galeria oculto" id="galeria">
+        <h2>Nuestros Recuerdos 📸</h2>
+        <div class="grid-galeria" id="grid-galeria">
+          <!-- Aquí se cargan las fotos -->
+        </div>
+      </section>
+
+      <!-- Nueva Sección de Fechas Especiales -->
+      <section id="seccion-fechas" class="seccion-fechas oculto">
+        <h3>📅 Fechas Especiales</h3>
+        <form id="form-fechas">
+          <input type="date" id="nueva-fecha" required>
+          <input type="text" id="nueva-descripcion" placeholder="¿Qué pasó este día?" required>
+          <button type="submit">Agregar Fecha</button>
+        </form>
+        <ul id="lista-fechas"></ul>
+      </section>
+    </div>
+
 
     <!-- MODAL (Ventana Flotante) -->
     <div id="modal" class="modal oculto">
